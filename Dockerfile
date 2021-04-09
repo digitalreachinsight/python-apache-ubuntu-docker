@@ -1,6 +1,6 @@
 # Prepare the base environment.
 FROM ubuntu:20.04 as builder_base_docker
-MAINTAINER asi@dbca.wa.gov.au
+MAINTAINER itadmin@digitalreach.com.au 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Australia/Perth
 ENV PRODUCTION_EMAIL=True
@@ -42,6 +42,11 @@ RUN apt-get install --no-install-recommends -y libapache2-mod-wsgi-py3 virtualen
 # Install the project (ensure that frontend projects have been built prior to this step).
 FROM python_libs_docker
 #COPY gunicorn.ini manage.py ./
+# Set  local perth time
+COPY timezone /etc/timezone
+ENV TZ=Australia/Perth
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 COPY sites.conf /etc/apache2/sites-enabled/
 RUN mkdir /etc/webconfs/
 RUN mkdir /etc/webconfs/apache/ 
@@ -57,6 +62,8 @@ COPY boot.sh /
 #RUN crontab /etc/cron.d/dockercron
 #RUN touch /var/log/cron.log
 #RUN service cron start
+RUN touch /etc/cron.d/dockercron
+RUN cron /etc/cron.d/dockercron
 RUN chmod 755 /boot.sh
 EXPOSE 80
 #HEALTHCHECK --interval=1m --timeout=5s --start-period=10s --retries=3 CMD ["wget", "-q", "-O", "-", "http://localhost:8080/"]
