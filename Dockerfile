@@ -25,8 +25,8 @@ RUN openssl req -new -newkey rsa:4096 -days 3650 -nodes -x509 -subj  "/C=AU/ST=W
 # Example Self Signed Cert
 
 
-RUN ln -s /usr/bin/python3 /usr/bin/python && \
-    ln -s /usr/bin/pip3 /usr/bin/pip
+RUN ln -s /usr/bin/python3 /usr/bin/python 
+#RUN ln -s /usr/bin/pip3 /usr/bin/pip
 RUN pip install --upgrade pip
 
 # Install Python libs from requirements.txt.
